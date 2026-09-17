@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Link WhatsApp</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Ícones da Lucide Icons para os botões -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gradient-to-br from-green-100 via-emerald-50 to-white min-h-screen flex items-center justify-center p-4">
+
+  <!-- Card Principal -->
+  <div class="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl max-w-md w-full border border-green-100 text-center">
+    
+    <!-- Ícone e Título -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-green-500 text-white p-3 rounded-full shadow-lg">
+        <i data-lucide="message-circle" class="w-8 h-8"></i>
+      </div>
+    </div>
+    
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Iniciar Conversa no WhatsApp</h1>
+    <p class="text-gray-500 text-sm mb-6">Digite ou cole o número de telefone abaixo com o DDD.</p>
+
+    <!-- Campo de Input com Botões Internos -->
+    <div class="relative mb-6">
+      <input 
+        type="tel" 
+        id="phoneInput" 
+        placeholder="(11) 99999-9999" 
+        class="w-full pl-4 pr-24 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-gray-700 font-medium"
+      />
+      
+      <!-- Ações dentro do input (Colar e Limpar) -->
+      <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        <!-- Botão Limpar -->
+        <button 
+          id="btnClear" 
+          title="Limpar texto"
+          class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 rounded-lg transition"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        
+        <!-- Botão Colar -->
+        <button 
+          id="btnPaste" 
+          title="Colar texto"
+          class="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-100 rounded-lg transition"
+        >
+          <i data-lucide="clipboard" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botão Principal de Redirecionamento -->
+    <button 
+      id="btnOpenWpp" 
+      class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+    >
+      <span>Abrir no WhatsApp</span>
+      <i data-lucide="external-link" class="w-5 h-5"></i>
+    </button>
+
+    <!-- Mensagem de erro caso tente enviar vazio -->
+    <p id="errorMessage" class="text-red-500 text-xs mt-3 hidden">
+      Por favor, insira um número válido.
+    </p>
+
+  </div>
+
+  <!-- Lógica em JavaScript -->
+  <script>
+    // Inicializa os ícones
+    lucide.createIcons();
+
+    // Elementos da página
+    const phoneInput = document.getElementById('phoneInput');
+    const btnClear = document.getElementById('btnClear');
+    const btnPaste = document.getElementById('btnPaste');
+    const btnOpenWpp = document.getElementById('btnOpenWpp');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Função para limpar o input
+    btnClear.addEventListener('click', () => {
+      phoneInput.value = '';
+      errorMessage.classList.add('hidden');
+      phoneInput.focus();
+    });
+
+    // Função para colar o texto da área de transferência (Clipboard)
+    btnPaste.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        phoneInput.value = text;
+        errorMessage.classList.add('hidden');
+      } catch (err) {
+        alert('Não foi possível acessar a área de transferência. Permita a permissão no seu navegador.');
+      }
+    });
+
+    // Função para abrir o WhatsApp
+    btnOpenWpp.addEventListener('click', () => {
+      // Remove tudo que não for número (espaços, parênteses, traços, etc)
+      let rawNumber = phoneInput.value.replace(/\D/g, '');
+
+      if (!rawNumber) {
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      errorMessage.classList.add('hidden');
+
+      // Se o usuário não colocar o 55 (código do Brasil), adicione automaticamente
+      // Considera números do Brasil comuns de 10 ou 11 dígitos
+      if (rawNumber.length === 10 || rawNumber.length === 11) {
+        rawNumber = '55' + rawNumber;
+      }
+
+      // Cria a URL do WhatsApp e abre em uma nova aba
+      const wppUrl = `https://wa.me/${rawNumber}`;
+      window.open(wppUrl, '_blank');
+    });
+
+    // Limpa a mensagem de erro ao digitar
+    phoneInput.addEventListener('input', () => {
+      if (phoneInput.value.trim() !== '') {
+        errorMessage.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
