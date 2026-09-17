@@ -3,133 +3,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Link WhatsApp</title>
+  <title>Gerador de Link e Mensagem WhatsApp</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ícones da Lucide Icons para os botões -->
+  <!-- Ícones da Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gradient-to-br from-green-100 via-emerald-50 to-white min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-green-100 via-emerald-50 to-white min-h-screen flex items-center justify-center p-4 py-12">
 
   <!-- Card Principal -->
-  <div class="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl max-w-md w-full border border-green-100 text-center">
+  <div class="bg-white/80 backdrop-blur-md p-6 sm:p-8 rounded-2xl shadow-xl max-w-lg w-full border border-green-100 text-center space-y-6">
     
     <!-- Ícone e Título -->
-    <div class="flex justify-center mb-4">
-      <div class="bg-green-500 text-white p-3 rounded-full shadow-lg">
-        <i data-lucide="message-circle" class="w-8 h-8"></i>
+    <div>
+      <div class="flex justify-center mb-3">
+        <div class="bg-green-500 text-white p-3 rounded-full shadow-lg">
+          <i data-lucide="message-circle" class="w-8 h-8"></i>
+        </div>
       </div>
+      <h1 class="text-2xl font-bold text-gray-800">Gerador WhatsApp</h1>
+      <p class="text-gray-500 text-sm">Prospecção rápida de clientes</p>
     </div>
-    
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Iniciar Conversa no WhatsApp</h1>
-    <p class="text-gray-500 text-sm mb-6">Digite ou cole o número de telefone abaixo com o DDD.</p>
 
-    <!-- Campo de Input com Botões Internos -->
-    <div class="relative mb-6">
-      <input 
-        type="tel" 
-        id="phoneInput" 
-        placeholder="(11) 99999-9999" 
-        class="w-full pl-4 pr-24 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-gray-700 font-medium"
-      />
-      
-      <!-- Ações dentro do input (Colar e Limpar) -->
-      <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-        <!-- Botão Limpar -->
-        <button 
-          id="btnClear" 
-          title="Limpar texto"
-          class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 rounded-lg transition"
-        >
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
+    <!-- SEÇÃO 1: NÚMERO DO WHATSAPP -->
+    <div class="space-y-3 text-left">
+      <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider">Número de Telefone</label>
+
+      <!-- Input de Telefone com Ações -->
+      <div class="relative">
+        <input 
+          type="tel" 
+          id="phoneInput" 
+          placeholder="(11) 99999-9999" 
+          class="w-full pl-4 pr-24 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-gray-700 font-medium"
+        />
         
-        <!-- Botão Colar -->
-        <button 
-          id="btnPaste" 
-          title="Colar texto"
-          class="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-100 rounded-lg transition"
-        >
-          <i data-lucide="clipboard" class="w-4 h-4"></i>
+        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <button id="btnClear" title="Limpar texto" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 rounded-lg transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+          <button id="btnPaste" title="Colar texto" class="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-100 rounded-lg transition">
+            <i data-lucide="clipboard" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Erro -->
+      <p id="errorMessage" class="text-red-500 text-xs hidden">Por favor, insira um número válido.</p>
+
+      <!-- Botões de Ação para o Número -->
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button id="btnGenerateLink" class="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 text-sm">
+          <i data-lucide="link" class="w-4 h-4"></i>
+          <span>Gerar Link</span>
+        </button>
+
+        <button id="btnOpenWpp" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5 text-sm">
+          <span>Abrir Conversa</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Exibição do Link Gerado -->
+      <div id="generatedLinkContainer" class="hidden mt-3 p-3 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-between gap-2">
+        <span id="generatedLinkText" class="text-xs text-gray-600 truncate font-mono"></span>
+        <button id="btnCopyLink" title="Copiar Link" class="p-1.5 bg-white text-gray-600 hover:text-green-600 rounded-lg shadow-sm border border-gray-200 transition shrink-0 flex items-center gap-1 text-xs">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span>Copiar Link</span>
         </button>
       </div>
     </div>
 
-    <!-- Botão Principal de Redirecionamento -->
-    <button 
-      id="btnOpenWpp" 
-      class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
-    >
-      <span>Abrir no WhatsApp</span>
-      <i data-lucide="external-link" class="w-5 h-5"></i>
-    </button>
+    <hr class="border-gray-200" />
 
-    <!-- Mensagem de erro caso tente enviar vazio -->
-    <p id="errorMessage" class="text-red-500 text-xs mt-3 hidden">
-      Por favor, insira um número válido.
-    </p>
+    <!-- SEÇÃO 2: DADOS DA MENSAGEM -->
+    <div class="space-y-4 text-left">
+      <h2 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Dados para Prospecção</h2>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Cidade</label>
+        <input type="text" id="inputCidade" placeholder="Ex: São Paulo" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Nicho / Tipo de Negócio</label>
+        <input type="text" id="inputNicho" placeholder="Ex: uma barbearia, um restaurante" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Nome da Empresa</label>
+        <input type="text" id="inputEmpresa" placeholder="Ex: Barbearia Silva" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+      </div>
+
+      <!-- Pré-visualização da Mensagem -->
+      <div class="mt-4">
+        <div class="flex justify-between items-center mb-1">
+          <label class="block text-xs font-semibold text-gray-600">Mensagem Pronta:</label>
+          <button id="btnCopyMsg" class="text-xs text-green-600 font-semibold hover:underline flex items-center gap-1">
+            <i data-lucide="copy" class="w-3 h-3"></i>
+            Copiar Mensagem
+          </button>
+        </div>
+        <textarea 
+          id="outputMsg" 
+          rows="5" 
+          readonly 
+          class="w-full p-3 bg-gray-100 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none resize-none font-sans"
+        ></textarea>
+      </div>
+    </div>
 
   </div>
 
-  <!-- Lógica em JavaScript -->
+  <!-- JavaScript -->
   <script>
-    // Inicializa os ícones
+    // Inicializar ícones
     lucide.createIcons();
 
-    // Elementos da página
+    // Elementos Seção 1
     const phoneInput = document.getElementById('phoneInput');
     const btnClear = document.getElementById('btnClear');
     const btnPaste = document.getElementById('btnPaste');
+    const btnGenerateLink = document.getElementById('btnGenerateLink');
     const btnOpenWpp = document.getElementById('btnOpenWpp');
     const errorMessage = document.getElementById('errorMessage');
+    const generatedLinkContainer = document.getElementById('generatedLinkContainer');
+    const generatedLinkText = document.getElementById('generatedLinkText');
+    const btnCopyLink = document.getElementById('btnCopyLink');
 
-    // Função para limpar o input
+    // Elementos Seção 2
+    const inputCidade = document.getElementById('inputCidade');
+    const inputNicho = document.getElementById('inputNicho');
+    const inputEmpresa = document.getElementById('inputEmpresa');
+    const outputMsg = document.getElementById('outputMsg');
+    const btnCopyMsg = document.getElementById('btnCopyMsg');
+
+    // Auxiliar Telefone
+    function getCleanPhone() {
+      let raw = phoneInput.value.replace(/\D/g, '');
+      if (!raw) return null;
+      if (raw.length === 10 || raw.length === 11) raw = '55' + raw;
+      return raw;
+    }
+
+    // Ações Telefone
     btnClear.addEventListener('click', () => {
       phoneInput.value = '';
       errorMessage.classList.add('hidden');
+      generatedLinkContainer.classList.add('hidden');
       phoneInput.focus();
     });
 
-    // Função para colar o texto da área de transferência (Clipboard)
     btnPaste.addEventListener('click', async () => {
       try {
         const text = await navigator.clipboard.readText();
         phoneInput.value = text;
         errorMessage.classList.add('hidden');
       } catch (err) {
-        alert('Não foi possível acessar a área de transferência. Permita a permissão no seu navegador.');
+        alert('Permissão negada para acessar a área de transferência.');
       }
     });
 
-    // Função para abrir o WhatsApp
-    btnOpenWpp.addEventListener('click', () => {
-      // Remove tudo que não for número (espaços, parênteses, traços, etc)
-      let rawNumber = phoneInput.value.replace(/\D/g, '');
+    btnGenerateLink.addEventListener('click', () => {
+      const phone = getCleanPhone();
+      if (!phone) {
+        errorMessage.classList.remove('hidden');
+        generatedLinkContainer.classList.add('hidden');
+        return;
+      }
+      errorMessage.classList.add('hidden');
+      const link = `https://wa.me/${phone}`;
+      generatedLinkText.textContent = link;
+      generatedLinkContainer.classList.remove('hidden');
+    });
 
-      if (!rawNumber) {
+    btnCopyLink.addEventListener('click', () => {
+      navigator.clipboard.writeText(generatedLinkText.textContent);
+      alert('Link copiado!');
+    });
+
+    btnOpenWpp.addEventListener('click', () => {
+      const phone = getCleanPhone();
+      if (!phone) {
         errorMessage.classList.remove('hidden');
         return;
       }
-
       errorMessage.classList.add('hidden');
-
-      // Se o usuário não colocar o 55 (código do Brasil), adicione automaticamente
-      // Considera números do Brasil comuns de 10 ou 11 dígitos
-      if (rawNumber.length === 10 || rawNumber.length === 11) {
-        rawNumber = '55' + rawNumber;
-      }
-
-      // Cria a URL do WhatsApp e abre em uma nova aba
-      const wppUrl = `https://wa.me/${rawNumber}`;
-      window.open(wppUrl, '_blank');
+      window.open(`https://wa.me/${phone}`, '_blank');
     });
 
-    // Limpa a mensagem de erro ao digitar
-    phoneInput.addEventListener('input', () => {
-      if (phoneInput.value.trim() !== '') {
-        errorMessage.classList.add('hidden');
+    // Lógica do Template de Mensagem Customizado
+    function updateMessage() {
+      const cidade = inputCidade.value.trim() || '[Sua Cidade]';
+      const nicho = inputNicho.value.trim();
+      const empresa = inputEmpresa.value.trim();
+
+      // Ajusta o trecho do nicho + empresa dinamicamente
+      let negocioTexto = "tem um negócio";
+      if (nicho && empresa) {
+        negocioTexto = `tem um (uma)${nicho} - o(a) ${empresa}`;
+      } else if (nicho) {
+        negocioTexto = `tem ${nicho}`;
+      } else if (empresa) {
+        negocioTexto = `é da ${empresa}`;
       }
+
+      // Montagem final do texto
+      const mensagemFinal = `Oi! Tudo bem? Sou desenvolvedor freelancer aqui de ${cidade}, faço sites profissionais rápidos e com bom acabamento (posso mandar alguns que já entreguei). Vi que você ${negocioTexto} — já pensou em ter um site pra atrair mais clientes? Se quiser, te mando os detalhes 🙂`;
+
+      outputMsg.value = mensagemFinal;
+    }
+
+    // Escuta as alterações nos inputs
+    [inputCidade, inputNicho, inputEmpresa].forEach(input => {
+      input.addEventListener('input', updateMessage);
     });
+
+    // Copiar Mensagem
+    btnCopyMsg.addEventListener('click', () => {
+      if (!outputMsg.value.trim()) return;
+      navigator.clipboard.writeText(outputMsg.value);
+      alert('Mensagem copiada com sucesso!');
+    });
+
+    // Inicializa o preview da mensagem
+    updateMessage();
   </script>
 </body>
 </html>
